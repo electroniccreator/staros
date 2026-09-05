@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>STAROS</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; font-family: Segoe UI, system-ui, sans-serif; }
+    #desktop {
+      height: 100%;
+      background: var(--bg);
+      color: white;
+    }
+    :root {
+      --bg: linear-gradient(160deg, #0b1220 0%, #152238 50%, #0a0f1a 100%);
+    }
+    .icons { padding: 18px; display: flex; flex-direction: column; gap: 16px; width: 120px; }
+    .icon { text-align: center; cursor: pointer; padding: 8px; border-radius: 12px; }
+    .icon:hover { background: #ffffff22; }
+    .pic {
+      width: 52px; height: 52px; margin: 0 auto 6px; border-radius: 14px;
+      display: grid; place-items: center; font-size: 24px;
+    }
+    .icon p { font-size: 13px; text-shadow: 0 1px 2px #000; }
+    #taskbar {
+      : fixed; left: 0; right: 0; bottom: 0; height: 48px;
+      background: #0d1320ee; display: flex; align-items: center; gap: 8px;
+      kmpadding: 0 10px; border-top: 1px solid #ffffff22;
+    }
+    #start, .task {
+      height: 36px; border: 0; border-radius: 10px; color: white; cursor: pointer;
+    }
+    #start { width: 40px; background: #3b6cff; font-weight: 800; }
+    .task { padding: 0 12px; background: #ffffff18; }
+    #clock { margin-left: auto; font-size: 13px; }
+    #menu {
+      display: none; position: fixed; left: 10px; bottom: 58px; width: 250px;
+      background: #151c2cee; border: 1px solid #ffffff22; border-radius: 16px; padding: 8px;
+    }
+    #menu button {
+      width: 100%; text-align: left; background: transparent; color: white;
+      border: 0; padding: 10px 12px; border-radius: 10px; cursor: pointer;
+    }
+    #menu button:hover { background: #ffffff18; }
+    .window {
+      position: absolute; width: 460px; min-height: 240px;
+      background: #1b2334; border: 1px solid #ffffff25; border-radius: 14px;
+      box-shadow: 0 20px 50px #0008; display: none; overflow: hidden;
+    }
+    .titlebar {
+      height: 36positionpx; background: #10182a; display: flex; align-items: center;
+      padding: 0 10px; cursor: move; user-select: none;
+    }
+    .titlebar b { font-size: 13px; }
+    .x { margin-left: auto; width: 28px; height: 22px; border: 0; border-radius: 6px; background: #ff5d5d; color: white; cursor: pointer; }
+    .body { padding: 14px; font-size: 14px; line-height: 1.45; color: #e8eefc; }
+    textarea, #term, pre {
+      width: 100%; height: 180px; border: 0; border-radius: 10px;
+      background: #0c1220; color: #c6f6d5; padding: 10px; resize: none;
+      font-family: Consolas, monospace; overflow: auto;
+    }
+    textarea { color: #e8eefc; height: 220px; }
+    .row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .file, .swatch {
+      border: 0; border-radius: 10px; padding: 8px 10px; cursor: pointer; color: white;
+    }
+    .file { background: #ffffff14; }
+    .swatch { width: 42px; height: 42px; }
+  </style>
+</head>
+<body>
+  <div id="desktop">
+    <div class="icons">
+      <div class="icon" onclick="openApp('about')"><div class="pic" style="background:#3b6cff">★</div><p>About</p></div>
+      <div class="icon" onclick="openApp('files')"><div class="pic" style="background:#06b6d4">📁</div><p>Files</p></div>
+      <div class="icon" onclick="openApp('term')"><div class="pic" style="background:#16a34a">▶</div><p>Terminal</p></div>
+      <div class="icon" onclick="openApp('notes')"><div class="pic" style="background:#f59e0b">✎</div><p>Notes</p></div>
+      <div class="icon" onclick="openApp('settings')"><div class="pic" style="background:#8b5cf6">⚙</div><p>Settings</p></div>
+    </div>
+
+    <div class="window" id="about" style="left:170px;top:70px">
+      <div class="titlebar"><b>About STAROS</b><button class="x" onclick="closeApp('about')">×</button></div>
+      <div class="body">
+        <h2>STAROS Web 0.3</h2>
+        <p>A browser desktop OS built for Hack Club Stardance.</p>
+        <p style="margin-top:8px;opacity:.8">Apps: About, Files, Terminal, Notes, Settings.</p>
+      </div>
+    </div>
+
+    <div class="window" id="files" style="left:220px;top:90px">
+      <div class="titlebar"><b>Files</b><button class="x" onclick="closeApp('files')">×</button></div>
+      <div class="body">
+        <div class="row">
+          <button class="file" onclick="openFile('readme')">readme.txt</button>
+          <button class="file" onclick="openFile('secret')">secret.txt</button>
+          <button class="file" onclick="openFile('kernel')">kernel.asm</button>
+        </div>
+        <pre id="fileview">Click a file.</pre>
+      </div>
+    </div>
+
+    <div class="window" id="term" style="left:280px;top:120px">
+      <div class="titlebar"><b>Terminal</b><button class="x" onclick="closeApp('term')">×</button></div>
+      <div class="body">
+        <div id="term">STAROS terminal\nType help\n\n</div>
+        <input id="cmd" placeholder="help | about | time | files | clear" style="margin-top:8px;width:100%;padding:8px 10px;border-radius:8px;border:1px solid #ffffff22;background:#0c1220;color:white" />
+      </div>
+    </div>
+
+    <div class="window" id="notes" style="left:340px;top:60px">
+      <div class="titlebar"><b>Notes</b><button class="x" onclick="closeApp('notes')">×</button></div>
+      <div class="body"><textarea placeholder="Write something..."></textarea></div>
+    </div>
+
+    <div class="window" id="settings" style="left:200px;top:140px">
+      <div class="titlebar"><b>Settings</b><button class="x" onclick="closeApp('settings')">×</button></div>
+      <div class="body">
+        <p style="margin-bottom:10px">Wallpaper</p>
+        <div class="row">
+          <button class="swatch" style="background:#12213a" onclick="setWall('linear-gradient(160deg,#0b1220,#152238,#0a0f1a)')"></button>
+          <button class="swatch" style="background:#14532d" onclick="setWall('linear-gradient(160deg,#052e16,#14532d,#022c22)')"></button>
+          <button class="swatch" style="background:#4c1d95" onclick="setWall('linear-gradient(160deg,#1e1b4b,#4c1d95,#0f172a)')"></button>
+          <button class="swatch" style="background:#9a3412" onclick="setWall('linear-gradient(160deg,#431407,#9a3412,#1c1917)')"></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="menu">
+      <button onclick="openApp('about'); hideMenu()">About</button>
+      <button onclick="openApp('files'); hideMenu()">Files</button>
+      <button onclick="openApp('term'); hideMenu()">Terminal</button>
+      <button onclick="openApp('notes'); hideMenu()">Notes</button>
+      <button onclick="openApp('settings'); hideMenu()">Settings</button>
+    </div>
+
+    <div id="taskbar">
+      <button id="start">S</button>
+      <button class="task" onclick="openApp('files')">Files</button>
+      <button class="task" onclick="openApp('term')">Terminal</button>
+      <div id="clock"></div>
+    </div>
+  </div>
+
+  <script>
+    const files = {
+      readme: 'STAROS Web\nA digital operating system in HTML.',
+      secret: 'There is no secret. You built this.',
+      kernel: '; this is the assembly kernel idea\nBITS 16\nORG 0x7C00'
+    };
+
+    function openApp(id) {
+      const w = document.getElementById(id);
+      w.style.display = 'block';
+      w.style.zIndex = Date.now();
+    }
+    function closeApp(id) { document.getElementById(id).style.display = 'none'; }
+    function hideMenu() { menu.style.display = 'none'; }
+    function openFile(name) { document.getElementById('fileview').textContent = files[name]; }
+    function setWall(v) { document.documentElement.style.setProperty('--bg', v); }
+
+    const menu = document.getElementById('menu');
+    document.getElementById('start').onclick = () => {
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    };
+
+    function tick() {
+      document.getElementById('clock').textContent =
+        new Date().toLocaleString([], { hour: '2-digit', minute: '2-digit', weekday: 'short' });
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    const term = document.getElementById('term');
+    const cmd = document.getElementById('cmd');
+    cmd.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const v = cmd.value.trim();
+      cmd.value = '';
+      let out = '';
+      if (v === 'help') out = 'help about time files clear';
+      else if (v === 'about') out = 'STAROS Web 0.3';
+      else if (v === 'time') out = new Date().toString();
+      else if (v === 'files') { openApp('files'); out = 'opened files'; }
+      else if (v === 'clear') { term.textContent = ''; return; }
+      else if (v) out = 'unknown command';
+      term.textContent += '> ' + v + '\n' + out + '\n';
+    });
+
+    document.querySelectorAll('.window').forEach(win => {
+      const bar = win.querySelector('.titlebar');
+      let drag = false, x = 0, y = 0;
+      bar.addEventListener('mousedown', (e) => {
+        drag = true;
+        x = e.clientX - win.offsetLeft;
+        y = e.clientY - win.offsetTop;
+        win.style.zIndex = Date.now();
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (!drag) return;
+        win.style.left = (e.clientX - x) + 'px';
+        win.style.top = (e.clientY - y) + 'px';
+      });
+      window.addEventListener('mouseup', () => drag = false);
+    });
+  </script>
+</body>
+</html>
