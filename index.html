@@ -8,11 +8,10 @@
     html, body { height: 100%; overflow: hidden; font-family: Segoe UI, system-ui, sans-serif; }
     #desktop {
       height: 100%;
-      background: var(--bg);
       color: white;
-    }
-    :root {
-      --bg: linear-gradient(160deg, #0b1220 0%, #152238 50%, #0a0f1a 100%);
+      background-image: url('car1.jpg');
+      background-size: cover;
+      background-position: center;
     }
     .icons { padding: 18px; display: flex; flex-direction: column; gap: 16px; width: 120px; }
     .icon { text-align: center; cursor: pointer; padding: 8px; border-radius: 12px; }
@@ -23,9 +22,11 @@
     }
     .icon p { font-size: 13px; text-shadow: 0 1px 2px #000; }
     #taskbar {
-      : fixed; left: 0; right: 0; bottom: 0; height: 48px;
-      background: #0d1320ee; display: flex; align-items: center; gap: 8px;
-      kmpadding: 0 10px; border-top: 1px solid #ffffff22;
+      position: fixed; left: 0; right: 0; bottom: 0; height: 48px;
+      background: rgba(13, 19, 32, 0.55);
+      backdrop-filter: blur(10px);
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 10px; border-top: 1px solid #ffffff22;
     }
     #start, .task {
       height: 36px; border: 0; border-radius: 10px; color: white; cursor: pointer;
@@ -35,7 +36,8 @@
     #clock { margin-left: auto; font-size: 13px; }
     #menu {
       display: none; position: fixed; left: 10px; bottom: 58px; width: 250px;
-      background: #151c2cee; border: 1px solid #ffffff22; border-radius: 16px; padding: 8px;
+      background: rgba(21, 28, 44, 0.55); backdrop-filter: blur(12px);
+      border: 1px solid #ffffff22; border-radius: 16px; padding: 8px;
     }
     #menu button {
       width: 100%; text-align: left; background: transparent; color: white;
@@ -44,28 +46,38 @@
     #menu button:hover { background: #ffffff18; }
     .window {
       position: absolute; width: 460px; min-height: 240px;
-      background: #1b2334; border: 1px solid #ffffff25; border-radius: 14px;
+      background: rgba(27, 35, 52, 0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid #ffffff40; border-radius: 14px;
       box-shadow: 0 20px 50px #0008; display: none; overflow: hidden;
     }
     .titlebar {
-      height: 36positionpx; background: #10182a; display: flex; align-items: center;
+      height: 36px; background: rgba(16, 24, 42, 0.45);
+      display: flex; align-items: center;
       padding: 0 10px; cursor: move; user-select: none;
     }
     .titlebar b { font-size: 13px; }
-    .x { margin-left: auto; width: 28px; height: 22px; border: 0; border-radius: 6px; background: #ff5d5d; color: white; cursor: pointer; }
+    .x {
+      margin-left: auto; width: 28px; height: 22px; border: 0; border-radius: 6px;
+      background: #ff5d5d; color: white; cursor: pointer;
+    }
     .body { padding: 14px; font-size: 14px; line-height: 1.45; color: #e8eefc; }
     textarea, #term, pre {
       width: 100%; height: 180px; border: 0; border-radius: 10px;
-      background: #0c1220; color: #c6f6d5; padding: 10px; resize: none;
-      font-family: Consolas, monospace; overflow: auto;
+      background: rgba(12, 18, 32, 0.55); color: #c6f6d5; padding: 10px;
+      resize: none; font-family: Consolas, monospace; overflow: auto;
     }
     textarea { color: #e8eefc; height: 220px; }
     .row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-    .file, .swatch {
-      border: 0; border-radius: 10px; padding: 8px 10px; cursor: pointer; color: white;
+    .file {
+      border: 0; border-radius: 10px; padding: 8px 10px; cursor: pointer;
+      color: white; background: #ffffff14;
     }
-    .file { background: #ffffff14; }
-    .swatch { width: 42px; height: 42px; }
+    .car {
+      width: 110px; height: 70px; object-fit: cover; border-radius: 10px;
+      cursor: pointer; border: 2px solid #ffffff33;
+    }
+    .car:hover { border-color: #3b6cff; }
   </style>
 </head>
 <body>
@@ -81,9 +93,9 @@
     <div class="window" id="about" style="left:170px;top:70px">
       <div class="titlebar"><b>About STAROS</b><button class="x" onclick="closeApp('about')">×</button></div>
       <div class="body">
-        <h2>STAROS Web 0.3</h2>
-        <p>A browser desktop OS built for Hack Club Stardance.</p>
-        <p style="margin-top:8px;opacity:.8">Apps: About, Files, Terminal, Notes, Settings.</p>
+        <h2>STAROS Web</h2>
+        <p>A desktop in the browser, built for Hack Club Stardance.</p>
+        <p style="margin-top:8px;opacity:.85">Windows are 50% see-through so the wallpaper shows through.</p>
       </div>
     </div>
 
@@ -92,8 +104,7 @@
       <div class="body">
         <div class="row">
           <button class="file" onclick="openFile('readme')">readme.txt</button>
-          <button class="file" onclick="openFile('secret')">secret.txt</button>
-          <button class="file" onclick="openFile('kernel')">kernel.asm</button>
+          <button class="file" onclick="openFile('cars')">cars.txt</button>
         </div>
         <pre id="fileview">Click a file.</pre>
       </div>
@@ -103,7 +114,7 @@
       <div class="titlebar"><b>Terminal</b><button class="x" onclick="closeApp('term')">×</button></div>
       <div class="body">
         <div id="term">STAROS terminal\nType help\n\n</div>
-        <input id="cmd" placeholder="help | about | time | files | clear" style="margin-top:8px;width:100%;padding:8px 10px;border-radius:8px;border:1px solid #ffffff22;background:#0c1220;color:white" />
+        <input id="cmd" placeholder="help | about | time | wall1 | wall2 | wall3 | clear" style="margin-top:8px;width:100%;padding:8px 10px;border-radius:8px;border:1px solid #ffffff22;background:rgba(12,18,32,0.55);color:white" />
       </div>
     </div>
 
@@ -112,15 +123,14 @@
       <div class="body"><textarea placeholder="Write something..."></textarea></div>
     </div>
 
-    <div class="window" id="settings" style="left:200px;top:140px">
+    <div class="window" id="settings" style="left:200px;top:80px;width:520px">
       <div class="titlebar"><b>Settings</b><button class="x" onclick="closeApp('settings')">×</button></div>
       <div class="body">
-        <p style="margin-bottom:10px">Wallpaper</p>
+        <p style="margin-bottom:10px">Click a picture to set wallpaper</p>
         <div class="row">
-          <button class="swatch" style="background:#12213a" onclick="setWall('linear-gradient(160deg,#0b1220,#152238,#0a0f1a)')"></button>
-          <button class="swatch" style="background:#14532d" onclick="setWall('linear-gradient(160deg,#052e16,#14532d,#022c22)')"></button>
-          <button class="swatch" style="background:#4c1d95" onclick="setWall('linear-gradient(160deg,#1e1b4b,#4c1d95,#0f172a)')"></button>
-          <button class="swatch" style="background:#9a3412" onclick="setWall('linear-gradient(160deg,#431407,#9a3412,#1c1917)')"></button>
+          <img class="car" src="car1.jpg" alt="car1" onclick="usePic('car1.jpg')" />
+          <img class="car" src="car2.jpg" alt="car2" onclick="usePic('car2.jpg')" />
+          <img class="car" src="car3.jpg" alt="car3" onclick="usePic('car3.jpg')" />
         </div>
       </div>
     </div>
@@ -135,7 +145,7 @@
 
     <div id="taskbar">
       <button id="start">S</button>
-      <button class="task" onclick="openApp('files')">Files</button>
+      <button class="task" onclick="openApp('settings')">Wallpaper</button>
       <button class="task" onclick="openApp('term')">Terminal</button>
       <div id="clock"></div>
     </div>
@@ -144,8 +154,7 @@
   <script>
     const files = {
       readme: 'STAROS Web\nA digital operating system in HTML.',
-      secret: 'There is no secret. You built this.',
-      kernel: '; this is the assembly kernel idea\nBITS 16\nORG 0x7C00'
+      cars: 'Wallpapers:\ncar1.jpg\ncar2.jpg\ncar3.jpg'
     };
 
     function openApp(id) {
@@ -156,7 +165,12 @@
     function closeApp(id) { document.getElementById(id).style.display = 'none'; }
     function hideMenu() { menu.style.display = 'none'; }
     function openFile(name) { document.getElementById('fileview').textContent = files[name]; }
-    function setWall(v) { document.documentElement.style.setProperty('--bg', v); }
+    function usePic(name) {
+      const d = document.getElementById('desktop');
+      d.style.backgroundImage = `url('${name}')`;
+      d.style.backgroundSize = 'cover';
+      d.style.backgroundPosition = 'center';
+    }
 
     const menu = document.getElementById('menu');
     document.getElementById('start').onclick = () => {
@@ -177,10 +191,12 @@
       const v = cmd.value.trim();
       cmd.value = '';
       let out = '';
-      if (v === 'help') out = 'help about time files clear';
-      else if (v === 'about') out = 'STAROS Web 0.3';
+      if (v === 'help') out = 'help about time wall1 wall2 wall3 clear';
+      else if (v === 'about') out = 'STAROS Web';
       else if (v === 'time') out = new Date().toString();
-      else if (v === 'files') { openApp('files'); out = 'opened files'; }
+      else if (v === 'wall1') { usePic('car1.jpg'); out = 'wallpaper car1'; }
+      else if (v === 'wall2') { usePic('car2.jpg'); out = 'wallpaper car2'; }
+      else if (v === 'wall3') { usePic('car3.jpg'); out = 'wallpaper car3'; }
       else if (v === 'clear') { term.textContent = ''; return; }
       else if (v) out = 'unknown command';
       term.textContent += '> ' + v + '\n' + out + '\n';
